@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>text-comparer</title>
+
+    <style>
+        *, *::before, *::after{
+            box-sizing: border-box;
+        }
+        body, html{
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            padding: 1rem;
+        }
+        table{
+            border-collapse: collapse;
+        }
+        table th,
+        table td{
+            border: 1px solid #7f7f7f;
+            padding: 2px 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>text-comparer</h1>
+
+    <div>
+        <textarea id="text-1" cols="30" rows="10" style="display: inline; vertical-align: middle;"></textarea>
+        <span id="result-1" style="vertical-align: middle;">?</span>
+        <textarea id="text-2" cols="30" rows="10" style="display: inline; vertical-align: middle;"></textarea>
+    </div>
+
+    <div style="margin-top: 1rem; margin-bottom: 1rem; border-bottom: 1px solid;"></div>
+
+    <div>
+        <textarea id="text-3" cols="30" rows="10" style="display: inline; vertical-align: top;"></textarea>
+
+        <table style="display: inline; vertical-align: top; font-size: 0.8rem;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Text</th>
+                </tr>
+            </thead>
+            <tbody id="result-2"></tbody>
+        </table>
+    </div>
+    
+
+    <script src="dist/text-comparer.js"></script>
+    <script>
+        function evt(e) {
+            var r = document.getElementById("result-1");
+            var str1 = document.getElementById("text-1").value;
+            var str2 = document.getElementById("text-2").value;
+
+            var res = textComparer.compare(str1, str2);
+            if (res < 0) {
+                r.innerHTML = "<";
+            } else if (res > 0) {
+                r.innerHTML = ">";
+            } else {
+                r.innerHTML = "=";
+            }
+        }
+
+        function evt2(e) {
+            var r = document.getElementById("result-2");
+            var str = document.getElementById("text-3").value;
+            var arr = str.split(/\r\n|\n|\r/g);
+            var sorted = arr.filter(function(el){
+                return el != "";
+            }).sort(textComparer.compare);
+
+            r.innerHTML = "";
+
+            for (var i = 0; i < sorted.length; i++) {
+                var s = sorted[i];
+                var text = "";
+                text += "<tr>";
+                text += "<td>"+(i+1)+"</td>";
+                text += "<td>"+s+"</td>";
+                text += "</tr>";
+                r.innerHTML += text;
+            }
+        }
+
+        document.getElementById("text-1").addEventListener("input", evt, false);
+        document.getElementById("text-2").addEventListener("input", evt, false);
+        document.getElementById("text-3").addEventListener("input", evt2, false);
+    </script>
+</body>
+
+</html>
